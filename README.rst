@@ -15,6 +15,7 @@ These requirements are expressed in the pip-requirements.txt file and may be
 installed by running the following (from within a virtual environment)::
 
     pip install -r pip-requirements.txt
+    chmod -R a+w static/tmp/*
 
 
 How to run
