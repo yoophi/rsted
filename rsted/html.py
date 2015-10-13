@@ -1,14 +1,9 @@
+import random
+import subprocess
 
-import os
-import sys
-from os.path import join as J
-#import codecs
+from flask import url_for
+import os.path as op
 
-from docutils.core import publish_string
-
-#utf8codec = codecs.lookup('utf-8')
-
-# see http://docutils.sourceforge.net/docs/user/config.html
 default_rst_opts = {
     'no_generator': True,
     'no_source_link': True,
@@ -20,18 +15,20 @@ default_rst_opts = {
     'halt_level': 5,
 }
 
+
 def rst2html(rst, theme=None, opts=None):
-    rst_opts = default_rst_opts.copy()
-    if opts:
-        rst_opts.update(opts)
-    rst_opts['template'] = 'var/themes/template.txt'
+    proj_dir = op.dirname(op.dirname(__file__))
 
-    stylesheets = ['basic.css']
-    if theme:
-        stylesheets.append('%s/%s.css' % (theme, theme))
-    rst_opts['stylesheet'] = ','.join([J('var/themes/', p) for p in stylesheets ])
+    filename = op.join(proj_dir, 'static', 'tmp', 'docs', 'index.rst')
+    source_dir = op.join(proj_dir, 'static', 'tmp', 'docs')
+    target_dir = op.join(proj_dir, 'static', 'tmp', 'docs', 'build')
 
-    out = publish_string(rst, writer_name='html', settings_overrides=rst_opts)
+    print proj_dir, filename, source_dir, target_dir
 
-    return out
+    with open(filename, 'w') as f:
+        f.write(rst)
+        f.flush()
 
+        subprocess.call(['sphinx-build', source_dir, target_dir, filename])
+
+    return '<html><head><script>window.location.href = "{url}"; </script><body><a href="{url}">link</a></body></html>'.format(url=url_for('static', filename='tmp/docs/build/index.html', version=random.random()))

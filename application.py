@@ -21,6 +21,7 @@ if run_from != os.path.curdir:
 # create our little application :)
 app = Flask(__name__)
 app.config.from_pyfile(os.environ.get('RSTED_CONF', 'settings.py'))
+app.config['DEBUG'] = True
 redis = RedisManager(app).get_instance()
 
 REDIS_EXPIRE = app.config.setdefault('REDIS_EXPIRE', 60*60*24*30*6) # Default 6 months
